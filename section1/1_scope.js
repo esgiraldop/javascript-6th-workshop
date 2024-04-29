@@ -1,24 +1,14 @@
-const askOption = (msg, options) => {
-    //Function to ask for an answer and return a validated option
-    let ans
-    do{
-       ans = prompt(msg)
-        if(options.includes(ans) === false){
-            alert("Invalid option. Please try again")
-        }
-    }while(options.includes(ans) === false)
-    return ans === '1'
-}
+import {askOption} from "../utilities.js"
 
 const askUser = () =>{
     let msg
     const options = ['1', '2']
     msg = "Is 'globalVariable' accessible from this context?\n1. Yes\n2. No"
-    globalVariableAns = askOption(msg, options)
+    let globalVariableAns = askOption(msg, options)
     msg = "Is 'functionVariable' accessible from this context?\n1. Yes\n2. No"
-    functionVariableAns = askOption(msg, options)
+    let functionVariableAns = askOption(msg, options)
     msg = "Is 'blockVariable' accessible from this context?\n1. Yes\n2. No"
-    blockVariableAns = askOption(msg, options)
+    let blockVariableAns = askOption(msg, options)
     return {
         globalVariableAns,
         functionVariableAns,
@@ -87,8 +77,7 @@ const scope = () => {
     alert(msg)
     function testScope() {
         // Function Scope
-        var functionVari
-        functionVariable = "Soy una variable local.";
+        var functionVariable = "Soy una variable local.";
 
         // Testing in the function context
         errors = 0
