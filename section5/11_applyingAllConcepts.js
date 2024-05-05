@@ -1,4 +1,4 @@
-import {getAllRoomsInfo, filterRoomByCapacity, askUsrNum, askMenuOp} from "./bookingAppUtils.js";
+import {getAllRoomsInfo, createReservation, askMenuOp, idGeneratorWrapper, getStrOfUsrReservations, cancelReservation, editReservations} from "./bookingAppUtils.js";
 
 // Ruta del archivo data.json
 const url = "section5/data.json"; // Cambiar por la ruta correcta
@@ -25,12 +25,12 @@ function cargarYMostrarData() {
           console.error(error);
           reject(error); // Rechaza la promesa si hay un error
         });
-    }, 3000);
+    }, 0);
   });
 }
 
-const mainMenu = (usrAns) =>{
-    let msg, ops
+const mainMenu = (rooms, roomTypes, reservations, idGenReserv) =>{
+    let msg, ops, usrAns, allRoomsInfo
     msg = "Ingrese opción:\n"+
             "1. Reservar habitación\n" +
             "2. Ver reservas bajo un nombre de usuario\n" +
@@ -39,27 +39,30 @@ const mainMenu = (usrAns) =>{
             "5. Salir\n"
     ops = /^[1-5]$/
     usrAns = Number(askMenuOp(msg, ops))
+    // Obtener habitaciones después de cargar los datos
+    allRoomsInfo = getAllRoomsInfo(rooms, roomTypes)
     switch(usrAns){
         case 1:
-            console.log("Did you come here?")
-            alert("Case 1 selected")
-            mainMenu()
+            createReservation(allRoomsInfo, reservations, idGenReserv)
+            mainMenu(rooms, roomTypes, reservations, idGenReserv)
             break
         case 2:
-            alert("Case 2 selected")
-            mainMenu()
+            const {usrReservations:_, msg} = getStrOfUsrReservations(reservations)
+            alert(msg)
+            mainMenu(rooms, roomTypes, reservations, idGenReserv)
             break
         case 3:
-            alert("Case 3 selected")
-            mainMenu()
+            cancelReservation(reservations)
+            mainMenu(rooms, roomTypes, reservations, idGenReserv)
             break
         case 4:
-            alert("Case 4 selected")
-            mainMenu()
+            editReservations(reservations)
+            mainMenu(rooms, roomTypes, reservations, idGenReserv)
             break
         case 5:
             // Exit the program
-            return "Goodbye. Thanks for using the program!"
+            alert("Hasta pronto! Gracias por usar el programa")
+            return
     }
 }
 
@@ -68,25 +71,12 @@ const main = () =>{
     // Llamar a la función para cargar y mostrar el contenido de data.json
     cargarYMostrarData()
     .then(({ rooms, roomTypes }) => {
-
-        let allRoomsInfo, filteredRooms, usrAns, msg, ops
         // Menu principal
-        mainMenu()
-
-        /*
-        // Obtener habitaciones disponibles después de cargar los datos
-        allRoomsInfo = getAllRoomsInfo(rooms, roomTypes)
-        usrAns = askUsrNum()
-        filteredRooms = filterRoomByCapacity(allRoomsInfo, usrAns)
-
-        alert(JSON.stringify(filteredRooms))
-        */
+        const reservations = []
+        let idGenReserv = idGeneratorWrapper()
+        mainMenu(rooms, roomTypes, reservations, idGenReserv)
         })
-        .then(msg => {
-            console.log("This is a test")
-            alert(msg)
-        })
-        .catch((error) => {
+    .catch((error) => {
         console.error("Error al manejar la promesa:", error);
     });
 }
