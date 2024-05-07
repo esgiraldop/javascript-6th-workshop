@@ -1,4 +1,4 @@
-import {getAllRoomsInfo, createReservation, askMenuOp, idGeneratorWrapper, getStrOfUsrReservations, cancelReservation, editReservations} from "./bookingAppUtils.js";
+import {getAllRoomsInfo, verifyReservation, createReservation, askMenuOp, idGeneratorWrapper, getStrOfUsrReservations, cancelReservation, editReservations} from "./bookingAppUtils.js";
 
 // Ruta del archivo data.json
 const url = "section5/data.json"; // Cambiar por la ruta correcta
@@ -29,7 +29,7 @@ function cargarYMostrarData() {
   });
 }
 
-const mainMenu = (rooms, roomTypes, reservations, idGenReserv) =>{
+const mainMenu = async (rooms, roomTypes, reservations, idGenReserv) =>{
     let msg, ops, usrAns, allRoomsInfo
     msg = "Ingrese opción:\n"+
             "1. Reservar habitación\n" +
@@ -43,7 +43,8 @@ const mainMenu = (rooms, roomTypes, reservations, idGenReserv) =>{
     allRoomsInfo = getAllRoomsInfo(rooms, roomTypes)
     switch(usrAns){
         case 1:
-            createReservation(allRoomsInfo, reservations, idGenReserv)
+            const vectInfo = verifyReservation(allRoomsInfo, reservations)
+            await createReservation(vectInfo, idGenReserv, reservations)
             mainMenu(rooms, roomTypes, reservations, idGenReserv)
             break
         case 2:

@@ -124,7 +124,7 @@ const askDateRange = () =>{
     return {initDate, endDate}
 }
 
-const createReservation = (allRoomsInfo, reservations, idGenReserv) =>{
+const verifyReservation = (allRoomsInfo, reservations) =>{
     // TODO: How do I make this setTimeout to work here and not appear at the end after the main promise? setTimeout(() => Resolve("Habitación disponible"), 5000)
 
     let msg, guestsNum, filteredRooms, initDate, endDate, roomNum, isRoomAvailab, usrName, crrntRoomReservations
@@ -163,17 +163,32 @@ const createReservation = (allRoomsInfo, reservations, idGenReserv) =>{
     msg = "La habitación está disponible y puede ser reservada en estas fechas!\n" +
         "Por favor ingrese su primer nombre y apellido, separado por un espacio: "
     usrName = askName(msg)
-    const reservation = {
-        id: idGenReserv(),
-        roomNum,
-        initDate,
-        endDate,
-        usrName,
-        guestsNum
-    }
-    reservations.push(reservation)
-    msg = "Reserva creada!\nLos datos son los siguientes:\n"
-    alert(msg + JSON.stringify(reservation))
+    return [roomNum, initDate, endDate, usrName, guestsNum]
+}
+
+const createReservation = (vectInfo, idGenReserv, reservations)=>{
+    let msg
+    const [roomNum, initDate, endDate, usrName, guestsNum] = vectInfo
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            let flag = true
+            const reservation = {
+            id: idGenReserv(),
+            roomNum,
+            initDate,
+            endDate,
+            usrName,
+            guestsNum
+        }
+        reservations.push(reservation)
+        msg = "Reserva creada!\nLos datos son los siguientes:\n"
+
+        if(!flag){
+            reject("La reserva no pudo ser creada")
+        }
+        resolve(alert(msg + JSON.stringify(reservation)))
+        }, 3000)
+    })
 }
 
 const cancelReservation = reservations =>{
@@ -202,4 +217,4 @@ const editReservations = reservations =>{
     alert(`Item ${JSON.stringify(reservations[idxOfItem2modify])} modificado exitosamente!`)
 }
 
-export {getAllRoomsInfo, createReservation, askMenuOp, idGeneratorWrapper, getStrOfUsrReservations, cancelReservation, editReservations}
+export {getAllRoomsInfo, verifyReservation, createReservation, askMenuOp, idGeneratorWrapper, getStrOfUsrReservations, cancelReservation, editReservations}
